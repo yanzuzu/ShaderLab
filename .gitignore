@@ -1,2 +1,9 @@
 ShaderLab/ShaderLab-csharp.sln
 ShaderLab/ShaderLab.sln
+ShaderLab/Assembly-CSharp-Editor-vs.csproj
+ShaderLab/Assembly-CSharp-Editor.csproj
+ShaderLab/Assembly-CSharp-firstpass-vs.csproj
+ShaderLab/Assembly-CSharp-firstpass.csproj
+ShaderLab/Assembly-CSharp-vs.csproj
+ShaderLab/Assembly-CSharp.csproj
+ShaderLab/ShaderLab.userprefs
