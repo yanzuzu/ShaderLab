@@ -7,3 +7,5 @@ ShaderLab/Assembly-CSharp-firstpass.csproj
 ShaderLab/Assembly-CSharp-vs.csproj
 ShaderLab/Assembly-CSharp.csproj
 ShaderLab/ShaderLab.userprefs
+ShaderLab/Assembly-UnityScript-vs.unityproj
+ShaderLab/Assembly-UnityScript.unityproj
