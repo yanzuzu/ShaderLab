@@ -1,29 +1,60 @@
-﻿Shader "Example/WorldRefl Normalmap" {
-Properties {
-_MainTex ("Texture", 2D) = "white" {}
-_BumpMap ("Bumpmap", 2D) = "bump" {}
-_Cube ("Cubemap", CUBE) = "" {}
-}
-SubShader {
-Tags { "RenderType" = "Opaque" }
-CGPROGRAM
-#pragma surface surf Lambert
-#pragma debug
-struct Input {
-float2 uv_MainTex;
-float2 uv_BumpMap;
-float3 worldRefl;
-INTERNAL_DATA // what is this? where is it defined?
-};
-sampler2D _MainTex;
-sampler2D _BumpMap;
-samplerCUBE _Cube;
-void surf (Input IN, inout SurfaceOutput o) {
-o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * 0.5;
-o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
-o.Emission = texCUBE (_Cube, WorldReflectionVector (IN, o.Normal)).rgb; 
-}
-ENDCG
-} 
-Fallback "Diffuse"
+﻿Shader "UnityCoder/Rays2"
+{
+    Properties 
+    {
+        tDiffuse ("Base (RGB)", 2D) = "white" {}
+        fX ("fX", Float) = 0.5 // you can feed mouse xpos here with script: var mpos:Vector3 = Camera.main.ScreenToViewportPoint(Input.mousePosition); renderer.material.SetFloat( "fX", mpos.x);
+        fY ("fY", Float) = 0.5 //  mouse ypos
+        fExposure ("fExposure", Float) = 0.6
+        fDecay ("fDecay", Float) = 0.93
+        fDensity ("fDensity", Float) = 0.96
+        fWeight ("fWeight", Float) = 0.4
+        fClamp ("fClamp", Float) = 1.0
+        iSamples ("iSamples", Range(0,100)) = 50
+    }
+    SubShader {
+        Tags { "RenderType"="Opaque" }
+        LOD 200
+        Cull Off
+         
+        CGPROGRAM
+        #pragma target 3.0
+        #pragma surface surf Lambert
+ 
+        sampler2D tDiffuse;
+        float fX,fY,fExposure,fDecay,fDensity,fWeight,fClamp,iSamples;
+ 
+        struct Input {
+            float2 uvtDiffuse;
+            float4 screenPos;
+        };
+ 
+        void surf (Input IN, inout SurfaceOutput o) 
+        {
+            //int iSamples=100;
+            float2 vUv = IN.uvtDiffuse;
+            //vUv *= float2(1,1); // repeat?
+            float2 deltaTextCoord = float2(vUv - float2(fX,fY));
+            deltaTextCoord *= 1.0 /  float(iSamples) * fDensity;
+            float2 coord = vUv;
+            float illuminationDecay = 1.0;
+            float4 FragColor = float4(0.0);
+            for(int i=0; i < iSamples ; i++)
+            {
+                coord -= deltaTextCoord;
+                float4 texel = tex2D(tDiffuse, coord);
+                texel *= illuminationDecay * fWeight;
+                FragColor += texel;
+                illuminationDecay *= fDecay;
+            }
+            FragColor *= fExposure;
+            FragColor = clamp(FragColor, 0.0, fClamp);
+            float4 c = FragColor;
+            o.Albedo = c.rgb;
+            o.Alpha = c.a;
+             
+        }
+        ENDCG
+    } 
+    FallBack "Diffuse"
 }

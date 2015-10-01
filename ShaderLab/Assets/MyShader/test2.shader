@@ -1,0 +1,3 @@
+﻿Shader "Custom/test2" {
+	
+}
