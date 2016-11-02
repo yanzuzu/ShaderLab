@@ -1,4 +1,6 @@
-﻿Shader "Custom/BumpMappingWithSnow" {
+﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+Shader "Custom/BumpMappingWithSnow" {
 	Properties
 	{
 		_MainTex("MainTex", 2D ) = "white"{}
@@ -30,7 +32,7 @@
 		
 		void vert( inout appdata_full v )
 		{
-			float4 snowDirLocal = mul( _World2Object , _SnowDir );
+			float4 snowDirLocal = mul( unity_WorldToObject , _SnowDir );
 			if( dot( v.normal , snowDirLocal.xyz ) > lerp(1,-1,_SnowLevel ))
 			{
 				v.vertex.xyz += ( v.normal * _SnowLevel * _SnowDepth );
