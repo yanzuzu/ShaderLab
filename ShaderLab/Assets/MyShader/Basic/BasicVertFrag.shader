@@ -1,4 +1,6 @@
-﻿Shader "Custom/BasicVertFrag"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/BasicVertFrag"
 {
 	Properties
 	{
@@ -13,6 +15,7 @@
 
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma enable_d3d11_debug_symbols
 
 			fixed4 _Color;
 
@@ -31,7 +34,7 @@
 			v2f vert( a2v i )
 			{
 				v2f output;
-				output.pos = mul( UNITY_MATRIX_MVP, i.pos );
+				output.pos = UnityObjectToClipPos( i.pos );
 				output.color = i.normal * 0.5 + ( 0.5,0.5,0.5);
 				return output;
 			}

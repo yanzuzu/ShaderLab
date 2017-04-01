@@ -1,4 +1,6 @@
-﻿Shader "Custom/outline" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/outline" {
 	Properties
 	{
 		_MainColor("MainColor", Color ) = (1,1,1,1)
@@ -32,7 +34,7 @@
 			{
 				v2f o;
 				v.vertex.xyz += v.normal * _OutlineWidth;
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex );
+				o.pos = UnityObjectToClipPos(v.vertex );
 //				float3 norm =  mul((float3x3)UNITY_MATRIX_IT_MV, v.normal );
 //				float2 offset = TransformViewToProjection(norm.xy);
 //				o.pos.xy += offset * o.pos.z * _OutlineWidth;
@@ -67,7 +69,7 @@
 			v2f vert( appdata_base v )
 			{
 				v2f o;
-				o.pos = mul( UNITY_MATRIX_MVP , v.vertex );
+				o.pos = UnityObjectToClipPos(  v.vertex );
 				o.uv = v.texcoord;
 				return o;
 			}

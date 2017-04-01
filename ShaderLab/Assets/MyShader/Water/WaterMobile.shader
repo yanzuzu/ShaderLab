@@ -1,4 +1,6 @@
-﻿Shader "Custom/WaterMobile" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/WaterMobile" {
 	Properties
 	{
 		_WaterTex ("Normal Map (RGB), Foam (A)", 2D) = "white" {}
@@ -77,7 +79,7 @@
 					//v.vertex.y += water*_WaveHeight;
 
 
-					o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.position = UnityObjectToClipPos(v.vertex);
 					
 					//float time = fmod_Time.x
 					
@@ -200,7 +202,7 @@
 				{
 					WaterInput o;					
 					o.depthParams.xy = v.texcoord.xy;									
-					o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.position = UnityObjectToClipPos(v.vertex);
 
 					return o;
 				}

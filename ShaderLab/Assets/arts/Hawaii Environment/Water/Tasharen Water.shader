@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Tasharen/Water"
 {
 	Properties
@@ -100,7 +102,7 @@ Shader "Tasharen/Water"
 		void vert (inout appdata_full v, out Input o)
 		{
 			o.worldPos = v.vertex.xyz;
-			o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.position = UnityObjectToClipPos(v.vertex);
 			o.proj0 = ComputeScreenPos(o.position);
 			COMPUTE_EYEDEPTH(o.proj0.z);
 		
@@ -227,7 +229,7 @@ Shader "Tasharen/Water"
 		void vert (inout appdata_full v, out Input o)
 		{
 			o.worldPos = v.vertex.xyz;
-			o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.position = UnityObjectToClipPos(v.vertex);
 			o.proj0 = ComputeScreenPos(o.position);
 			COMPUTE_EYEDEPTH(o.proj0.z);
 		
@@ -340,7 +342,7 @@ Shader "Tasharen/Water"
 		void vert (inout appdata_full v, out Input o)
 		{
 			o.worldPos = v.vertex.xyz;
-			o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.position = UnityObjectToClipPos(v.vertex);
 			o.proj0 = ComputeScreenPos(o.position);
 			COMPUTE_EYEDEPTH(o.proj0.z);
 		}
@@ -445,7 +447,7 @@ Shader "Tasharen/Water"
 		void vert (inout appdata_full v, out Input o)
 		{
 			o.worldPos = v.vertex.xyz;
-			o.position = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.position = UnityObjectToClipPos(v.vertex);
 		}
 		
 		void surf (Input IN, inout SurfaceOutput o)
