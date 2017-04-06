@@ -2,17 +2,17 @@
 {
 	Properties
 	{
-		_Color("Color",Color ) = (1,1,1,1)
-		_MainTex("MainTex" , 2D ) = "white"{}
-		_BumpMap("BumpMap", 2D ) = "bump"{}
-		_BumpScale("BumpScale",Float) = 1
-		_Specular("Specular",Color) = (1,1,1,1)
-		_Glow("Glow",float ) = 20
+		_Color( "Color" , Color ) = (1,1,1,1)
+		_MainTex( "MainTex", 2d ) = "white"{}
+		_BumpTex( "BumpTex", 2d ) = "bump"{}
+		_BumpScale( "BumpScale", float ) = 1
+		_Specular( "Specular" , Color ) = (1,1,1,1)
+		_Glow("Glow", float ) = 20
 	}
 
 	SubShader
 	{
-		Tags { "LightMode" = "ForwardBase" }
+		Tags{ "LightMode" = "ForwardBase" }
 		Pass
 		{
 			CGPROGRAM
@@ -24,8 +24,8 @@
 			fixed4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			sampler2D _BumpMap;
-			float4 _BumpMap_ST;
+			sampler2D _BumpTex;
+			float4 _BumpTex_ST;
 			float _BumpScale;
 			fixed4 _Specular;
 			float _Glow;
@@ -41,20 +41,22 @@
 			struct v2f
 			{
 				float4 pos: SV_POSITION;
-				float3 tangentLight : TEXCOORD0;
-				float3 tangentViewDir: TEXCOORD1;
-				float4 uv : TEXCOORD2;
+				float4 uv: TEXCOORD0;
+				float3 tangentLight: TEXCOORD1;
+				float3 tangentView: TEXCOORD2;
 			};
 
 			v2f vert( a2v v )
 			{
 				v2f o;
 				o.pos = UnityObjectToClipPos(v.vertex);
-				TANGENT_SPACE_ROTATION;
-				o.tangentLight = mul( rotation , ObjSpaceLightDir(v.vertex) ).xyz;
-				o.tangentViewDir = mul( rotation, ObjSpaceViewDir(v.vertex) ).xyz;
+
 				o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
-				o.uv.zw = TRANSFORM_TEX(v.texcoord, _BumpMap);
+				o.uv.zw = TRANSFORM_TEX(v.texcoord, _BumpTex);
+
+				TANGENT_SPACE_ROTATION;
+				o.tangentLight = mul(rotation,ObjSpaceLightDir(v.vertex));
+				o.tangentView = mul(rotation,ObjSpaceViewDir(v.vertex));
 				return o;
 			}
 
@@ -62,26 +64,26 @@
 			{
 				fixed3 ambientColor = UNITY_LIGHTMODEL_AMBIENT.xyz;
 
-				fixed3 tangentLight = normalize(i.tangentLight);
-				fixed3 tangentView = normalize(i.tangentViewDir);
-
-				fixed4 packNormal = tex2D(_BumpMap, i.uv.zw );
-				fixed3 tangentNormal = UnpackNormal(packNormal);
+				fixed4 packedNormal = tex2D(_BumpTex , i.uv.zw);
+				fixed3 tangentNormal = UnpackNormal(packedNormal);
 				tangentNormal.xy *= _BumpScale;
 				tangentNormal.z = sqrt( 1 - saturate( dot( tangentNormal.xy , tangentNormal.xy ) ) );
-				fixed3 albedo = tex2D(_MainTex, i.uv ).rgb * _Color.rgb;
-				fixed3 diffuseColor = _LightColor0.rgb * albedo * saturate( dot( tangentNormal , tangentLight ) );
+				fixed3 tangentLight = normalize(i.tangentLight);
+				fixed3 tangentView = normalize(i.tangentView);
+				fixed3 albedo = tex2D(_MainTex,i.uv).rgb * _Color.rgb;
+				fixed3 diffuseColor = _LightColor0.rgb * albedo * saturate( dot( tangentLight , tangentNormal ) );
 
-				fixed3 halfLambert = normalize( tangentView + tangentLight );
-				fixed3 specularColor = _LightColor0.rgb * _Specular.rgb * pow( saturate( dot(halfLambert , tangentNormal ) ) , _Glow );
+				fixed3 halfLambert = normalize(tangentView + tangentLight );
+				fixed3 specularColor = _LightColor0.rgb * _Specular.rgb * pow( saturate( dot( tangentNormal , halfLambert ) ) , _Glow );
 
-				return fixed4( ambientColor + diffuseColor + specularColor   , 1 );
+				return fixed4( ambientColor + diffuseColor + specularColor , 1 );
+
 			}
 
-
 			ENDCG
-
 		}
 	}
+
 	FallBack "Diffuse"
+
 }
