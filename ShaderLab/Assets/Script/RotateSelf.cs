@@ -14,6 +14,6 @@ public class RotateSelf : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		trans.Rotate (Vector3.up * m_rotateAngle * Time.deltaTime, Space.Self);
+		trans.Rotate (Vector3.up * m_rotateAngle * Time.deltaTime, Space.World);
 	}
 }
