@@ -16,7 +16,6 @@ public class InitSceneMgr : MonoBehaviour
 		{"AdvancedTextureMap"},
 		{"BasicScene"},
 		{"BasicTexture"},
-		{"BumpMappingWithSnow"},
 		{"Glass"},
 		{"GrayPostEffect"},
 		{"Hologram"},
